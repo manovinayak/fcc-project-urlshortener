@@ -2,7 +2,7 @@ const express = require("express");
 const dns = require("dns");
 const router = express.Router();
 
-const urlList = [];
+let urlList = [];
 
 router.post("/shorturl", (req, res) => {
   console.log(`short-url api`);
@@ -38,6 +38,32 @@ router.post("/shorturl", (req, res) => {
   } catch (error) {
     console.error(`Error while shortening URL`, error);
     res.json({ error: `Invalid URL` });
+  }
+});
+
+router.get("/shorturl/:id", (req, res) => {
+  console.log(`short-url api redirect ${req.params.id}`);
+  console.log(urlList);
+
+  const getURLIndex = (index) => {
+    const urlIndex = parseInt(index) - 1;
+    console.log(urlList.length);
+    const isIndexExists = urlIndex >= 0 && urlIndex < urlList.length;
+    if (isIndexExists) {
+      return urlIndex;
+    } else {
+      return -1;
+    }
+  };
+
+  const urlIndex = getURLIndex(req.params.id);
+  console.log(urlIndex);
+
+  if (urlIndex >= 0) {
+    console.log(`redirecting to ${urlIndex[urlIndex]}`);
+    res.redirect(urlList[urlIndex]);
+  } else {
+    res.json({ error: "Wrong format" });
   }
 });
 
